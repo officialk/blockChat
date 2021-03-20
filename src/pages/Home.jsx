@@ -71,7 +71,7 @@ export default function Home() {
     }
   });
   ws.on("message", (data) => {
-    if (data.timestamp - lastMessage) {
+    if (data.timestamp !== lastMessage) {
       lastMessage = data.timestamp;
       let cpy = messages;
       cpy.push(data);
@@ -163,10 +163,11 @@ export default function Home() {
                     pic: localStorage.getItem("pic"),
                     name: localStorage.getItem("name"),
                   });
-                  document.getElementById("message").value = "";
+                  document.getElementById("message").value = "...waiting";
                   setTimeout(() => {
                     document.getElementById("message").disabled = false;
-                  }, 1000);
+                    document.getElementById("message").value = "";
+                  }, 5000);
                 }
               }}
             >
@@ -190,25 +191,29 @@ export default function Home() {
   const Messages = () => {
     return (
       <List style={{}}>
-        {messages.reverse().map((e, i) => {
-          return (
-            <Tooltip title={e.hash} key={room + i} placement="bottom" arrow>
-              <ListItem
-                alignItems="center"
-                divider
-                style={{ cursor: "pointer" }}
-              >
-                <ListItemAvatar>
-                  <Avatar src={e.data.pic} />
-                </ListItemAvatar>
-                <ListItemText
-                  primary={e.data.name}
-                  secondary={dec(e.data.message, password)}
-                />
-              </ListItem>
-            </Tooltip>
-          );
-        })}
+        {messages
+          .sort((a, b) => {
+            return b.timestamp - a.timestamp;
+          })
+          .map((e, i) => {
+            return (
+              <Tooltip title={e.hash} key={room + i} placement="bottom" arrow>
+                <ListItem
+                  alignItems="center"
+                  divider
+                  style={{ cursor: "pointer" }}
+                >
+                  <ListItemAvatar>
+                    <Avatar src={e.data.pic} />
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={e.data.name}
+                    secondary={dec(e.data.message, password)}
+                  />
+                </ListItem>
+              </Tooltip>
+            );
+          })}
       </List>
     );
   };
