@@ -86,14 +86,13 @@ export default function Home() {
         <Typography variant="h5" align="center">
           Room Settings
         </Typography>
-        <TextField id="room" fullWidth label="Room Name" value="test" />
+        <TextField id="room" fullWidth label="Room Name" />
         <br />
         <br />
         <TextField
           id="password"
           type="password"
           fullWidth
-          value="test"
           label="Room Password"
         />
         <br />
@@ -156,6 +155,7 @@ export default function Home() {
                 let mssg = document.getElementById("message").value;
 
                 if (mssg !== "") {
+                  document.getElementById("message").disabled = true;
                   let encMssg = enc(mssg, password);
                   ws.emit("message", {
                     room: room,
@@ -164,6 +164,9 @@ export default function Home() {
                     name: localStorage.getItem("name"),
                   });
                   document.getElementById("message").value = "";
+                  setTimeout(() => {
+                    document.getElementById("message").disabled = false;
+                  }, 1000);
                 }
               }}
             >
